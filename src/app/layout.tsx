@@ -4,6 +4,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 
 import "@/styles/globals.css";
 import { ThemeProvider } from "@/components/provider/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
+import { ModalProvider } from "@/components/provider/dialog-provider";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -30,7 +32,9 @@ export default function RootLayout({
             enableSystem
             storageKey="vision-theme"
           >
+            <ModalProvider />
             {children}
+            <Toaster />
           </ThemeProvider>
         </body>
       </html>
