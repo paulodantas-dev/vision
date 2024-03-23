@@ -1,11 +1,11 @@
-import { cn } from "@/lib/utils";
-import { SessionProvider } from "@/providers/SessionProvider";
-import { ThemeProvider } from "@/providers/ThemeProvider";
-import "@/styles/globals.css";
 import type { Metadata } from "next";
-import { Noto_Sans_Mono } from "next/font/google";
+import { Montserrat } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
 
-const noto = Noto_Sans_Mono({
+import "@/styles/globals.css";
+import { ThemeProvider } from "@/components/provider/theme-provider";
+
+const montserrat = Montserrat({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
@@ -13,28 +13,27 @@ const noto = Noto_Sans_Mono({
 export const metadata: Metadata = {
   title: "Vision - APP",
   description: "Vision - APP",
-  icons: {
-    icon: "/logo.png",
-  },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="en">
-      <body className={cn("min-h-screen antialiased", noto.className)}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <SessionProvider>{children}</SessionProvider>
-        </ThemeProvider>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body className={montserrat.className}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            storageKey="vision-theme"
+          >
+            {children}
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

@@ -1,12 +1,6 @@
-import { auth } from "@/lib/auth";
+import { authMiddleware } from "@clerk/nextjs";
 
-export default auth((req) => {
-  // const isLogged = !!req.auth;
-  // if (!isLogged) {
-  //   return Response.redirect(new URL("/auth/login", req.nextUrl));
-  // }
-  // return Response.json(req.auth);
-});
+export default authMiddleware({});
 
 export const config = {
   matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/(api|trpc)(.*)"],
