@@ -73,9 +73,12 @@ export function CreateServerDialog() {
       }).then(async (res) => {
         if (res.ok) {
           const server = await res.json();
-          router.push(`/servers/${server.id}`);
 
           handleClose();
+          router.refresh();
+          setTimeout(() => {
+            router.push(`/servers/${server.id}`);
+          }, 500);
         } else {
           toast({
             variant: "destructive",
