@@ -3,7 +3,8 @@
 import { Plus } from "lucide-react";
 
 import { useDialog } from "@/hooks/use-dialog-store";
-import { ActionTooltip } from "@/components/tooltip/action-tooltip";
+
+import { ActionTooltip } from "./action-tooltip";
 
 export function NavigationAction() {
   const { onOpen } = useDialog();

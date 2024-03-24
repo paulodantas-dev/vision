@@ -3,8 +3,10 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import qs from "query-string";
+import { ChannelType } from "@prisma/client";
 
 import { useDialog } from "@/hooks/use-dialog-store";
 import {
@@ -25,30 +27,40 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { FileUpload } from "@/components/uploads/file-upload";
 import { useToast } from "@/components/ui/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const formSchema = z.object({
-  name: z.string().min(1, {
-    message: "Server name is required.",
-  }),
-  imageUrl: z.string().min(1, {
-    message: "Server image is required.",
-  }),
+  name: z
+    .string()
+    .min(1, {
+      message: "Channel name is required.",
+    })
+    .refine((name) => name.toLowerCase() !== "general", {
+      message: "Channel name cannot be 'general'",
+    }),
+  type: z.nativeEnum(ChannelType),
 });
 
-export function CreateServerDialog() {
-  const { isOpen, onClose, type } = useDialog();
+export function CreateChannelDialog() {
+  const { isOpen, onClose, type, data } = useDialog();
   const router = useRouter();
+  const params = useParams();
   const { toast } = useToast();
 
-  const isDialogOpen = isOpen && type === "createServer";
+  const isDialogOpen = isOpen && type === "createChannel";
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      imageUrl: "",
+      type: data.channelType || ChannelType.TEXT,
     },
   });
 
@@ -61,33 +73,40 @@ export function CreateServerDialog() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await fetch("/api/servers", {
+      const url = qs.stringifyUrl({
+        url: "/api/channels",
+        query: {
+          serverId: params?.serverId,
+        },
+      });
+
+      await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(values),
         next: {
-          tags: ["createServer"],
+          tags: ["createChannel"],
         },
       }).then(async (res) => {
         if (res.ok) {
-          const server = await res.json();
+          toast({
+            variant: "default",
+            description: "Channel created successfully.",
+          });
 
           handleClose();
           router.refresh();
-          setTimeout(() => {
-            router.push(`/servers/${server.id}`);
-          }, 500);
         } else {
           toast({
             variant: "destructive",
-            description: "Failed to create server.",
+            description: "Failed to create channel.",
           });
         }
       });
     } catch (error) {
-      console.error("[SERVERS_POST]", error);
+      console.error("[CREATE-CHANNEL]", error);
       toast({
         variant: "destructive",
         description: "something went wrong. Please try again.",
@@ -100,35 +119,14 @@ export function CreateServerDialog() {
       <DialogContent className="rounded-2xl">
         <DialogHeader className="flex flex-col gap-2">
           <DialogTitle className="text-2xl text-center font-bold">
-            Customize your server
+            Create Channel
           </DialogTitle>
-          <DialogDescription className="text-center tracking-wider">
-            Give your server a personality with a name and an image. You can
-            always change it later.
-          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className="flex flex-col gap-4"
           >
-            <FormField
-              control={form.control}
-              name="imageUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <FileUpload
-                      endpoint="serverImage"
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             <FormField
               control={form.control}
               name="name"
@@ -145,6 +143,39 @@ export function CreateServerDialog() {
                       {...field}
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Channel Type</FormLabel>
+                  <Select
+                    disabled={isLoading}
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger className=" focus:ring-0 ring-offset-0 focus:ring-offset-0 uppercase outline-none">
+                        <SelectValue placeholder="Select a channel type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {Object.values(ChannelType).map((type) => (
+                        <SelectItem
+                          key={type}
+                          value={type}
+                          className="uppercase"
+                        >
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

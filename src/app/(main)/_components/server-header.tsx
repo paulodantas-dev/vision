@@ -39,7 +39,7 @@ export function ServerHeader({ server, role }: ServerHeaderProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-none" asChild>
-        <button className="w-full text-md font-semibold px-3 flex items-center justify-between h-12 shadow-lg border-slate-200 dark:border-slate-800 border-b-2 hover:bg-slate-700/10 dark:hover:bg-slate-700/50 transition-colors">
+        <button className="w-full text-md font-semibold px-3 flex items-center justify-between h-12 shadow-md border-slate-200 dark:border-slate-800 border-b-2 hover:bg-slate-700/10 dark:hover:bg-slate-700/50 transition-colors">
           {server.name}
           <ChevronDown className="h-6 w-6 " />
         </button>

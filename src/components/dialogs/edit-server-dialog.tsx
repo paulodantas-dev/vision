@@ -27,6 +27,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FileUpload } from "@/components/uploads/file-upload";
 import { useToast } from "@/components/ui/use-toast";
+import { useEffect } from "react";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -37,12 +38,12 @@ const formSchema = z.object({
   }),
 });
 
-export function CreateServerDialog() {
-  const { isOpen, onClose, type } = useDialog();
+export function EditServerDialog() {
+  const { isOpen, onClose, type, data } = useDialog();
   const router = useRouter();
   const { toast } = useToast();
 
-  const isDialogOpen = isOpen && type === "createServer";
+  const isDialogOpen = isOpen && type === "editServer";
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -61,31 +62,19 @@ export function CreateServerDialog() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await fetch("/api/servers", {
-        method: "POST",
+      await fetch(`/api/servers/${data.server?.id}`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(values),
         next: {
-          tags: ["createServer"],
+          tags: ["editServer"],
         },
-      }).then(async (res) => {
-        if (res.ok) {
-          const server = await res.json();
-
-          handleClose();
-          router.refresh();
-          setTimeout(() => {
-            router.push(`/servers/${server.id}`);
-          }, 500);
-        } else {
-          toast({
-            variant: "destructive",
-            description: "Failed to create server.",
-          });
-        }
       });
+
+      handleClose();
+      router.refresh();
     } catch (error) {
       console.error("[SERVERS_POST]", error);
       toast({
@@ -94,6 +83,13 @@ export function CreateServerDialog() {
       });
     }
   };
+
+  useEffect(() => {
+    if (data.server) {
+      form.setValue("name", data.server.name);
+      form.setValue("imageUrl", data.server.imageUrl);
+    }
+  }, [form, data.server]);
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={handleClose}>
@@ -159,7 +155,7 @@ export function CreateServerDialog() {
                 {isLoading ? (
                   <Loader2 className="animate-spin h-4 w-4" />
                 ) : (
-                  "Create"
+                  "Save"
                 )}
               </Button>
             </DialogFooter>

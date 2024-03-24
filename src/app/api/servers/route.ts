@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 import { MemberRole } from "@prisma/client";
 import { randomUUID } from "crypto";
 
@@ -31,7 +31,6 @@ export async function POST(req: Request) {
     });
 
     revalidateTag("createServer");
-    revalidatePath(`/servers/${server.id}`);
 
     return NextResponse.json(server, { status: 201 });
   } catch (error) {

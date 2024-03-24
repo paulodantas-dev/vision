@@ -1,8 +1,4 @@
-import { currentProfile } from "@/actions/current-profile";
-import { db } from "@/lib/db";
-import { redirectToSignIn } from "@clerk/nextjs";
-import { redirect } from "next/navigation";
-import { ServerSidebar } from "../_components/server-sidebar";
+import { ServerSidebar } from "@/app/(main)/_components/server-sidebar";
 
 interface LayoutProps {
   children: React.ReactNode;

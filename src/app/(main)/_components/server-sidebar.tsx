@@ -1,9 +1,11 @@
-import { currentProfile } from "@/actions/current-profile";
-import { db } from "@/lib/db";
 import { ChannelType } from "@prisma/client";
 import { redirect } from "next/navigation";
-import { ServerHeader } from "./server-header";
+
+import { currentProfile } from "@/actions/current-profile";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { db } from "@/lib/db";
+
+import { ServerHeader } from "./server-header";
 
 interface ServerSidebarProps {
   serverId: string;
