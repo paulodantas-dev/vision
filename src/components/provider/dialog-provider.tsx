@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { CreateServerDialog } from "@/components/dialogs/create-server-dialog";
+import { InviteModal } from "@/components/dialogs/invite-dialog";
 
 //provide  hydration error for the modal
 export function ModalProvider() {
@@ -19,6 +20,7 @@ export function ModalProvider() {
   return (
     <>
       <CreateServerDialog />
+      <InviteModal />
     </>
   );
 }
