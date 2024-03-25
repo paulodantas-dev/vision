@@ -1,4 +1,4 @@
-import { ServerSidebar } from "@/app/(main)/_components/server-sidebar";
+import { ServerSidebar } from "@/app/(main)/_components/sidebar/server-sidebar";
 
 interface LayoutProps {
   children: React.ReactNode;

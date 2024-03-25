@@ -1,4 +1,4 @@
-import { NavigationSidebar } from "@/app/(main)/_components/navigation-sidebar";
+import { NavigationSidebar } from "@/app/(main)/_components/navigation/navigation-sidebar";
 
 interface LayoutProps {
   children: React.ReactNode;
